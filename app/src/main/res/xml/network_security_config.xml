@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Base config for every flavor: no cleartext traffic, ever. The dev flavor
+    overrides this file (src/dev/res/xml/network_security_config.xml) to
+    allow the emulator's loopback host only — staging/prod must stay on
+    this HTTPS-only default (spec §62 environment separation).
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

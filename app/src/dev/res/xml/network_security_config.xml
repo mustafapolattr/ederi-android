@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dev-flavor-only override of src/main/res/xml/network_security_config.xml.
+    Permits cleartext (HTTP) solely to 10.0.2.2, the Android emulator's alias
+    for the host machine's loopback, matching DEV_API_BASE_URL's default of
+    http://10.0.2.2:8000/. Never merged into staging/prod, which keep the
+    base HTTPS-only config.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>

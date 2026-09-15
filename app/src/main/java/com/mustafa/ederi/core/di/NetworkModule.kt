@@ -2,7 +2,10 @@ package com.mustafa.ederi.core.di
 
 import com.mustafa.ederi.core.config.EnvironmentConfig
 import com.mustafa.ederi.core.network.AuthInterceptor
+import com.mustafa.ederi.core.network.TokenAuthenticator
 import com.mustafa.ederi.data.remote.ApiService
+import com.mustafa.ederi.data.remote.AuthApiService
+import com.mustafa.ederi.data.remote.BigDecimalAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -22,28 +25,54 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMoshi(): Moshi = Moshi.Builder()
+        .add(BigDecimalAdapter())
         .add(KotlinJsonAdapterFactory())
         .build()
 
+    private fun loggingInterceptor(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor().apply {
+            level = if (EnvironmentConfig.isDebug) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
+        }
+
+    @AuthClient
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient =
+    fun provideAuthOkHttpClient(): OkHttpClient =
         OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
-            .apply {
-                if (EnvironmentConfig.isDebug) {
-                    addInterceptor(
-                        HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        }
-                    )
-                }
-            }
+            .addInterceptor(loggingInterceptor())
             .build()
 
+    @AuthenticatedClient
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit =
+    fun provideAuthenticatedOkHttpClient(
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .authenticator(tokenAuthenticator)
+            .addInterceptor(loggingInterceptor())
+            .build()
+
+    @AuthClient
+    @Provides
+    @Singleton
+    fun provideAuthRetrofit(@AuthClient okHttpClient: OkHttpClient, moshi: Moshi): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(EnvironmentConfig.apiBaseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+
+    @AuthenticatedClient
+    @Provides
+    @Singleton
+    fun provideAuthenticatedRetrofit(@AuthenticatedClient okHttpClient: OkHttpClient, moshi: Moshi): Retrofit =
         Retrofit.Builder()
             .baseUrl(EnvironmentConfig.apiBaseUrl)
             .client(okHttpClient)
@@ -52,6 +81,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService =
+    fun provideAuthApiService(@AuthClient retrofit: Retrofit): AuthApiService =
+        retrofit.create(AuthApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideApiService(@AuthenticatedClient retrofit: Retrofit): ApiService =
         retrofit.create(ApiService::class.java)
 }

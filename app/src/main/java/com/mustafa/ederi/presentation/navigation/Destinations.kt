@@ -9,11 +9,16 @@ import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Destination(val route: String) {
+    data object Login : Destination("login")
+    data object Register : Destination("register")
     data object Home : Destination("home")
     data object Transactions : Destination("transactions")
     data object Budget : Destination("budget")
     data object Goals : Destination("goals")
     data object AiAssistant : Destination("ai_assistant")
+    data object Accounts : Destination("accounts")
+    data object AddAccount : Destination("accounts/add")
+    data object AddTransaction : Destination("transactions/add")
 }
 
 data class BottomNavItem(
