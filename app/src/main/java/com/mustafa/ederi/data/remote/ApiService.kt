@@ -3,9 +3,14 @@ package com.mustafa.ederi.data.remote
 import com.mustafa.ederi.data.remote.dto.AccountCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.AccountDto
 import com.mustafa.ederi.data.remote.dto.AccountUpdateRequestDto
+import com.mustafa.ederi.data.remote.dto.BudgetCreateRequestDto
+import com.mustafa.ederi.data.remote.dto.BudgetDto
 import com.mustafa.ederi.data.remote.dto.CategoryCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.CategoryDto
 import com.mustafa.ederi.data.remote.dto.CategoryUpdateRequestDto
+import com.mustafa.ederi.data.remote.dto.DashboardResponseDto
+import com.mustafa.ederi.data.remote.dto.GoalCreateRequestDto
+import com.mustafa.ederi.data.remote.dto.GoalDto
 import com.mustafa.ederi.data.remote.dto.PaginatedResponseDto
 import com.mustafa.ederi.data.remote.dto.TransactionCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.TransactionDto
@@ -65,4 +70,19 @@ interface ApiService {
 
     @DELETE("transactions/{id}/")
     suspend fun deleteTransaction(@Path("id") id: String): Response<Unit>
+
+    @GET("dashboard/")
+    suspend fun getDashboard(): Response<DashboardResponseDto>
+
+    @GET("budgets/")
+    suspend fun getBudgets(@Query("month") month: String? = null): Response<PaginatedResponseDto<BudgetDto>>
+
+    @POST("budgets/")
+    suspend fun createBudget(@Body request: BudgetCreateRequestDto): Response<BudgetDto>
+
+    @GET("goals/")
+    suspend fun getGoals(): Response<PaginatedResponseDto<GoalDto>>
+
+    @POST("goals/")
+    suspend fun createGoal(@Body request: GoalCreateRequestDto): Response<GoalDto>
 }
