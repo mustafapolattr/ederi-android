@@ -10,9 +10,9 @@ class TransactionMappersTest {
 
     private val dto = TransactionDto(
         id = "tx-1",
-        account_id = "acc-1",
-        to_account_id = "acc-2",
-        category_id = "cat-1",
+        account = "acc-1",
+        to_account = "acc-2",
+        category = "cat-1",
         type = "transfer",
         amount = BigDecimal("250.00"),
         currency = "USD",

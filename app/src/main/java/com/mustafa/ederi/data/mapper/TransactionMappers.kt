@@ -8,9 +8,9 @@ import java.math.BigDecimal
 
 fun TransactionDto.toEntity() = TransactionEntity(
     id = id,
-    accountId = account_id,
-    toAccountId = to_account_id,
-    categoryId = category_id,
+    accountId = account,
+    toAccountId = to_account,
+    categoryId = category,
     type = type,
     amount = amount.toPlainString(),
     currency = currency,

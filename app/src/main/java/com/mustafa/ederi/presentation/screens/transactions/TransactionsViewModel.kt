@@ -86,20 +86,20 @@ class TransactionsViewModel @Inject constructor(
         viewModelScope.launch {
             isRefreshing.value = true
             val txResult = transactionRepository.refreshTransactions()
-            accountRepository.refreshAccounts()
-            categoryRepository.refreshCategories()
-            when (txResult) {
-                is NetworkResult.Success -> {
+            val accountResult = accountRepository.refreshAccounts()
+            val categoryResult = categoryRepository.refreshCategories()
+            val errors = listOfNotNull(
+                (txResult as? NetworkResult.Error)?.error,
+                (accountResult as? NetworkResult.Error)?.error,
+                (categoryResult as? NetworkResult.Error)?.error
+            )
+            when {
+                errors.isEmpty() -> {
                     loadError.value = null
                     offlineBanner.value = false
                 }
-                is NetworkResult.Error -> {
-                    if (txResult.error is AppError.NoConnection) {
-                        offlineBanner.value = true
-                    } else {
-                        loadError.value = txResult.error
-                    }
-                }
+                errors.any { it is AppError.NoConnection } -> offlineBanner.value = true
+                else -> loadError.value = errors.first()
             }
             isRefreshing.value = false
         }

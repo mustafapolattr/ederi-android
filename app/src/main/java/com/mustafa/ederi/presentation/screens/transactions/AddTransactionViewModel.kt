@@ -30,8 +30,8 @@ sealed class AddTransactionUiState {
 @HiltViewModel
 class AddTransactionViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository,
-    accountRepository: AccountRepository,
-    categoryRepository: CategoryRepository
+    private val accountRepository: AccountRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
     val accounts: StateFlow<List<Account>> =
@@ -42,6 +42,13 @@ class AddTransactionViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<AddTransactionUiState>(AddTransactionUiState.Idle)
     val uiState: StateFlow<AddTransactionUiState> = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            accountRepository.refreshAccounts()
+            categoryRepository.refreshCategories()
+        }
+    }
 
     fun createTransaction(
         accountId: String,

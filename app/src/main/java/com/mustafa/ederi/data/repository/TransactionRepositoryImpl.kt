@@ -53,9 +53,9 @@ class TransactionRepositoryImpl @Inject constructor(
         transactionDate: String
     ): NetworkResult<Transaction> {
         val request = TransactionCreateRequestDto(
-            account_id = accountId,
-            to_account_id = toAccountId,
-            category_id = categoryId,
+            account = accountId,
+            to_account = toAccountId,
+            category = categoryId,
             type = type.name.lowercase(),
             amount = amount,
             currency = currency,
@@ -82,7 +82,7 @@ class TransactionRepositoryImpl @Inject constructor(
         transactionDate: String?
     ): NetworkResult<Transaction> {
         val request = TransactionUpdateRequestDto(
-            category_id = categoryId,
+            category = categoryId,
             merchant = merchant,
             description = description,
             notes = notes,

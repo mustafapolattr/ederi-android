@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mustafa.ederi.core.error.AppError
 import com.mustafa.ederi.domain.model.Account
 import com.mustafa.ederi.domain.model.TransactionType
 import java.text.SimpleDateFormat
@@ -161,7 +162,9 @@ fun AddTransactionScreen(
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedTextField(
             value = amount,
-            onValueChange = { amount = it },
+            onValueChange = { newValue ->
+                if (newValue.matches(Regex("^\\d*\\.?\\d*$"))) amount = newValue
+            },
             label = { Text("Amount") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -201,8 +204,14 @@ fun AddTransactionScreen(
 
         if (uiState is AddTransactionUiState.Error) {
             Spacer(modifier = Modifier.height(8.dp))
+            val error = (uiState as AddTransactionUiState.Error).error
+            val message = if (error is AppError.Validation && error.field != null) {
+                "${fieldLabel(error.field)}: ${error.userMessage}"
+            } else {
+                error.userMessage
+            }
             Text(
-                text = (uiState as AddTransactionUiState.Error).error.userMessage,
+                text = message,
                 color = MaterialTheme.colorScheme.error
             )
         }
@@ -239,4 +248,19 @@ fun AddTransactionScreen(
             }
         }
     }
+}
+
+/** Maps the backend's §41 error envelope field name to the label shown next to it on this screen. */
+private fun fieldLabel(field: String): String = when (field) {
+    "account_id" -> "Account"
+    "to_account_id" -> "To account"
+    "category_id" -> "Category"
+    "type" -> "Type"
+    "amount" -> "Amount"
+    "currency" -> "Currency"
+    "merchant" -> "Merchant"
+    "description" -> "Description"
+    "notes" -> "Notes"
+    "transaction_date" -> "Date"
+    else -> field
 }
