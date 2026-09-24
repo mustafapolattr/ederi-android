@@ -18,6 +18,7 @@ import com.mustafa.ederi.presentation.screens.auth.RegisterScreen
 import com.mustafa.ederi.presentation.screens.budget.BudgetScreen
 import com.mustafa.ederi.presentation.screens.goals.GoalsScreen
 import com.mustafa.ederi.presentation.screens.home.HomeScreen
+import com.mustafa.ederi.presentation.screens.recurringpayments.RecurringPaymentsScreen
 import com.mustafa.ederi.presentation.screens.transactions.AddTransactionScreen
 import com.mustafa.ederi.presentation.screens.transactions.TransactionsScreen
 
@@ -60,7 +61,10 @@ private fun MainGraph() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Destination.Home.route) {
-                HomeScreen(onNavigateToAccounts = { navController.navigate(Destination.Accounts.route) })
+                HomeScreen(
+                    onNavigateToAccounts = { navController.navigate(Destination.Accounts.route) },
+                    onNavigateToRecurringPayments = { navController.navigate(Destination.RecurringPayments.route) }
+                )
             }
             composable(Destination.Transactions.route) {
                 TransactionsScreen(onAddTransaction = { navController.navigate(Destination.AddTransaction.route) })
@@ -79,6 +83,9 @@ private fun MainGraph() {
             }
             composable(Destination.AddTransaction.route) {
                 AddTransactionScreen(onDone = { navController.popBackStack() })
+            }
+            composable(Destination.RecurringPayments.route) {
+                RecurringPaymentsScreen(onBack = { navController.popBackStack() })
             }
         }
     }

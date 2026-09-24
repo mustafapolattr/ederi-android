@@ -27,9 +27,15 @@ data class DashboardGoal(
     val requiredMonthlyContribution: BigDecimal
 )
 
+data class MonthEndForecast(val currency: String, val forecastBalance: BigDecimal)
+
+data class AvailableToSpend(val currency: String, val availableToSpend: BigDecimal)
+
 data class DashboardData(
     val totalBalance: List<CurrencyAmount>,
     val thisMonth: List<MonthSummary>,
     val budgets: List<DashboardBudget>,
-    val goals: List<DashboardGoal>
+    val goals: List<DashboardGoal>,
+    val forecast: List<MonthEndForecast>,
+    val availableToSpend: List<AvailableToSpend>
 )

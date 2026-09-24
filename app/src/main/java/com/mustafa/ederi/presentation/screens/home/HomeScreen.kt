@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -27,15 +28,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mustafa.ederi.domain.model.AvailableToSpend
 import com.mustafa.ederi.domain.model.CurrencyAmount
 import com.mustafa.ederi.domain.model.DashboardBudget
 import com.mustafa.ederi.domain.model.DashboardData
 import com.mustafa.ederi.domain.model.DashboardGoal
+import com.mustafa.ederi.domain.model.MonthEndForecast
 import com.mustafa.ederi.domain.model.MonthSummary
 
 @Composable
 fun HomeScreen(
     onNavigateToAccounts: () -> Unit,
+    onNavigateToRecurringPayments: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -54,6 +58,10 @@ fun HomeScreen(
                 }
                 Button(onClick = onNavigateToAccounts) {
                     Text("Accounts")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = onNavigateToRecurringPayments) {
+                    Text("Recurring")
                 }
             }
         }
@@ -74,6 +82,20 @@ private fun DashboardContent(data: DashboardData, modifier: Modifier = Modifier)
             item { Text("No accounts yet.", style = MaterialTheme.typography.bodySmall) }
         }
         items(data.totalBalance) { balance -> BalanceRow(balance) }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item { SectionTitle("Available to spend") }
+        if (data.availableToSpend.isEmpty()) {
+            item { Text("No data yet.", style = MaterialTheme.typography.bodySmall) }
+        }
+        items(data.availableToSpend) { entry -> AvailableToSpendRow(entry) }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item { SectionTitle("Forecast (month end)") }
+        if (data.forecast.isEmpty()) {
+            item { Text("No data yet.", style = MaterialTheme.typography.bodySmall) }
+        }
+        items(data.forecast) { entry -> ForecastRow(entry) }
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { SectionTitle("This month") }
@@ -111,6 +133,28 @@ private fun BalanceRow(balance: CurrencyAmount) {
     ) {
         Text(text = balance.currency, style = MaterialTheme.typography.bodyMedium)
         Text(text = balance.amount.toString(), style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+private fun AvailableToSpendRow(entry: AvailableToSpend) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = entry.currency, style = MaterialTheme.typography.bodyMedium)
+        Text(text = entry.availableToSpend.toString(), style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+private fun ForecastRow(entry: MonthEndForecast) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = entry.currency, style = MaterialTheme.typography.bodyMedium)
+        Text(text = entry.forecastBalance.toString(), style = MaterialTheme.typography.bodyMedium)
     }
 }
 

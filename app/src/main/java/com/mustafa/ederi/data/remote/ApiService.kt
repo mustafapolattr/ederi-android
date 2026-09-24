@@ -12,6 +12,8 @@ import com.mustafa.ederi.data.remote.dto.DashboardResponseDto
 import com.mustafa.ederi.data.remote.dto.GoalCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.GoalDto
 import com.mustafa.ederi.data.remote.dto.PaginatedResponseDto
+import com.mustafa.ederi.data.remote.dto.RecurringPaymentCreateRequestDto
+import com.mustafa.ederi.data.remote.dto.RecurringPaymentDto
 import com.mustafa.ederi.data.remote.dto.TransactionCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.TransactionDto
 import com.mustafa.ederi.data.remote.dto.TransactionUpdateRequestDto
@@ -85,4 +87,13 @@ interface ApiService {
 
     @POST("goals/")
     suspend fun createGoal(@Body request: GoalCreateRequestDto): Response<GoalDto>
+
+    @GET("recurring-payments/")
+    suspend fun getRecurringPayments(): Response<PaginatedResponseDto<RecurringPaymentDto>>
+
+    @POST("recurring-payments/")
+    suspend fun createRecurringPayment(@Body request: RecurringPaymentCreateRequestDto): Response<RecurringPaymentDto>
+
+    @DELETE("recurring-payments/{id}/")
+    suspend fun deleteRecurringPayment(@Path("id") id: String): Response<Unit>
 }

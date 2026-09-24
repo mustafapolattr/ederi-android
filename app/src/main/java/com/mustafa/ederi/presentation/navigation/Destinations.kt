@@ -19,6 +19,7 @@ sealed class Destination(val route: String) {
     data object Accounts : Destination("accounts")
     data object AddAccount : Destination("accounts/add")
     data object AddTransaction : Destination("transactions/add")
+    data object RecurringPayments : Destination("recurring_payments")
 }
 
 data class BottomNavItem(
