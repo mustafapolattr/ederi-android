@@ -30,6 +30,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustafa.ederi.domain.model.AccountType
+import com.mustafa.ederi.presentation.components.CurrencyDropdownField
+import com.mustafa.ederi.presentation.components.DEFAULT_CURRENCY
 
 @Composable
 fun AddAccountScreen(
@@ -38,7 +40,7 @@ fun AddAccountScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var name by remember { mutableStateOf("") }
-    var currency by remember { mutableStateOf("USD") }
+    var currency by remember { mutableStateOf(DEFAULT_CURRENCY) }
     var initialBalance by remember { mutableStateOf("0") }
     var typeExpanded by remember { mutableStateOf(false) }
     var selectedType by remember { mutableStateOf(AccountType.CASH) }
@@ -82,11 +84,9 @@ fun AddAccountScreen(
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = currency,
-            onValueChange = { currency = it.uppercase() },
-            label = { Text("Currency (e.g. USD)") },
-            singleLine = true,
+        CurrencyDropdownField(
+            selected = currency,
+            onSelected = { currency = it },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))

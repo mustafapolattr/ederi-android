@@ -36,6 +36,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustafa.ederi.domain.model.Account
 import com.mustafa.ederi.domain.model.Category
 import com.mustafa.ederi.domain.model.ParseTransactionResult
+import com.mustafa.ederi.presentation.components.CurrencyDropdownField
+import com.mustafa.ederi.presentation.components.DEFAULT_CURRENCY
 
 @Composable
 fun AiAssistantScreen(modifier: Modifier = Modifier, viewModel: AiViewModel = hiltViewModel()) {
@@ -50,7 +52,7 @@ fun AiAssistantScreen(modifier: Modifier = Modifier, viewModel: AiViewModel = hi
     var chatInput by remember { mutableStateOf("") }
     var parseInput by remember { mutableStateOf("") }
     var scenarioAmount by remember { mutableStateOf("") }
-    var scenarioCurrency by remember { mutableStateOf("") }
+    var scenarioCurrency by remember { mutableStateOf(DEFAULT_CURRENCY) }
 
     LazyColumn(modifier = modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
         item { Text(text = "AI Assistant", style = MaterialTheme.typography.headlineSmall) }
@@ -181,12 +183,10 @@ fun AiAssistantScreen(modifier: Modifier = Modifier, viewModel: AiViewModel = hi
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                OutlinedTextField(
-                    value = scenarioCurrency,
-                    onValueChange = { scenarioCurrency = it.uppercase() },
-                    label = { Text("Currency") },
-                    singleLine = true,
-                    modifier = Modifier.width(100.dp)
+                CurrencyDropdownField(
+                    selected = scenarioCurrency,
+                    onSelected = { scenarioCurrency = it },
+                    modifier = Modifier.width(140.dp)
                 )
             }
         }

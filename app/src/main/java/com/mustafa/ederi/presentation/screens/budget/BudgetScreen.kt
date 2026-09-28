@@ -32,6 +32,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustafa.ederi.domain.model.Category
+import com.mustafa.ederi.presentation.components.CurrencyDropdownField
+import com.mustafa.ederi.presentation.components.DEFAULT_CURRENCY
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -48,7 +50,7 @@ fun BudgetScreen(
     var categoryExpanded by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
     var amount by remember { mutableStateOf("") }
-    var currency by remember { mutableStateOf("USD") }
+    var currency by remember { mutableStateOf(DEFAULT_CURRENCY) }
     var startDate by remember { mutableStateOf(firstDayOfThisMonth()) }
     var endDate by remember { mutableStateOf(lastDayOfThisMonth()) }
 
@@ -109,11 +111,9 @@ fun BudgetScreen(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = currency,
-            onValueChange = { currency = it.uppercase() },
-            label = { Text("Currency (e.g. USD)") },
-            singleLine = true,
+        CurrencyDropdownField(
+            selected = currency,
+            onSelected = { currency = it },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))

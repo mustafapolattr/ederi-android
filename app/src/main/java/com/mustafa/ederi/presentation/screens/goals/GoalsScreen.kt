@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustafa.ederi.domain.model.Goal
 import com.mustafa.ederi.domain.model.GoalType
+import com.mustafa.ederi.presentation.components.CurrencyDropdownField
+import com.mustafa.ederi.presentation.components.DEFAULT_CURRENCY
 import java.math.BigDecimal
 
 @Composable
@@ -48,7 +50,7 @@ fun GoalsScreen(
     var selectedGoalType by remember { mutableStateOf(GoalType.CUSTOM) }
     var targetAmount by remember { mutableStateOf("") }
     var currentAmount by remember { mutableStateOf("0") }
-    var currency by remember { mutableStateOf("USD") }
+    var currency by remember { mutableStateOf(DEFAULT_CURRENCY) }
     var targetDate by remember { mutableStateOf("") }
 
     LaunchedEffect(createState) {
@@ -130,11 +132,9 @@ fun GoalsScreen(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = currency,
-            onValueChange = { currency = it.uppercase() },
-            label = { Text("Currency (e.g. USD)") },
-            singleLine = true,
+        CurrencyDropdownField(
+            selected = currency,
+            onSelected = { currency = it },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
