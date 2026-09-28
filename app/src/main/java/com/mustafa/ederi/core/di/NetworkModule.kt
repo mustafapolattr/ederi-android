@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -57,6 +58,11 @@ object NetworkModule {
             .addInterceptor(authInterceptor)
             .authenticator(tokenAuthenticator)
             .addInterceptor(loggingInterceptor())
+            // 30s, not OkHttp's 10s default: the AI endpoints (spec §60 Phase 5) call an LLM
+            // and can take noticeably longer to respond than the rest of the API.
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
 
     @AuthClient

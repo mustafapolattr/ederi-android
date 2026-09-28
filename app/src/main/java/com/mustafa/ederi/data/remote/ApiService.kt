@@ -3,17 +3,24 @@ package com.mustafa.ederi.data.remote
 import com.mustafa.ederi.data.remote.dto.AccountCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.AccountDto
 import com.mustafa.ederi.data.remote.dto.AccountUpdateRequestDto
+import com.mustafa.ederi.data.remote.dto.AnalyzeResponseDto
 import com.mustafa.ederi.data.remote.dto.BudgetCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.BudgetDto
 import com.mustafa.ederi.data.remote.dto.CategoryCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.CategoryDto
 import com.mustafa.ederi.data.remote.dto.CategoryUpdateRequestDto
+import com.mustafa.ederi.data.remote.dto.ChatRequestDto
+import com.mustafa.ederi.data.remote.dto.ChatResponseDto
 import com.mustafa.ederi.data.remote.dto.DashboardResponseDto
 import com.mustafa.ederi.data.remote.dto.GoalCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.GoalDto
 import com.mustafa.ederi.data.remote.dto.PaginatedResponseDto
+import com.mustafa.ederi.data.remote.dto.ParseTransactionRequestDto
+import com.mustafa.ederi.data.remote.dto.ParseTransactionResponseDto
 import com.mustafa.ederi.data.remote.dto.RecurringPaymentCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.RecurringPaymentDto
+import com.mustafa.ederi.data.remote.dto.ScenarioRequestDto
+import com.mustafa.ederi.data.remote.dto.ScenarioResponseDto
 import com.mustafa.ederi.data.remote.dto.TransactionCreateRequestDto
 import com.mustafa.ederi.data.remote.dto.TransactionDto
 import com.mustafa.ederi.data.remote.dto.TransactionUpdateRequestDto
@@ -96,4 +103,16 @@ interface ApiService {
 
     @DELETE("recurring-payments/{id}/")
     suspend fun deleteRecurringPayment(@Path("id") id: String): Response<Unit>
+
+    @POST("ai/parse-transaction/")
+    suspend fun parseTransaction(@Body request: ParseTransactionRequestDto): Response<ParseTransactionResponseDto>
+
+    @POST("ai/analyze/")
+    suspend fun analyze(@Body body: Map<String, String> = emptyMap()): Response<AnalyzeResponseDto>
+
+    @POST("ai/chat/")
+    suspend fun chat(@Body request: ChatRequestDto): Response<ChatResponseDto>
+
+    @POST("ai/scenario/")
+    suspend fun scenario(@Body request: ScenarioRequestDto): Response<ScenarioResponseDto>
 }

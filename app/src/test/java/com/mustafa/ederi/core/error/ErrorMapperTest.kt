@@ -40,6 +40,26 @@ class ErrorMapperTest {
     }
 
     @Test
+    fun `429 daily AI quota envelope surfaces the backend's own message`() = runTest {
+        val json = """{"success":false,"error":{"code":"THROTTLED","message":"Daily AI request limit reached. Please try again tomorrow.","field":null}}"""
+        val body = json.toResponseBody("application/json".toMediaType())
+        val result = safeApiCall(moshi) { Response.error<String>(429, body) }
+        val error = (result as NetworkResult.Error).error as AppError.Validation
+        assertThat(error.field).isNull()
+        assertThat(error.reason).isEqualTo("Daily AI request limit reached. Please try again tomorrow.")
+    }
+
+    @Test
+    fun `503 AI rate limited envelope surfaces the backend's own message`() = runTest {
+        val json = """{"success":false,"error":{"code":"AI_RATE_LIMITED","message":"AI is busy right now. Please try again shortly.","field":null}}"""
+        val body = json.toResponseBody("application/json".toMediaType())
+        val result = safeApiCall(moshi) { Response.error<String>(503, body) }
+        val error = (result as NetworkResult.Error).error as AppError.Validation
+        assertThat(error.field).isNull()
+        assertThat(error.reason).isEqualTo("AI is busy right now. Please try again shortly.")
+    }
+
+    @Test
     fun `unparseable 500 body falls back to a generic Server error`() = runTest {
         val body = "not json".toResponseBody("text/plain".toMediaType())
         val result = safeApiCall(moshi) { Response.error<String>(500, body) }

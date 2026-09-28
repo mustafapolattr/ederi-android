@@ -1,6 +1,7 @@
 package com.mustafa.ederi.core.di
 
 import com.mustafa.ederi.data.repository.AccountRepositoryImpl
+import com.mustafa.ederi.data.repository.AiRepositoryImpl
 import com.mustafa.ederi.data.repository.AuthRepositoryImpl
 import com.mustafa.ederi.data.repository.BudgetRepositoryImpl
 import com.mustafa.ederi.data.repository.CategoryRepositoryImpl
@@ -9,6 +10,7 @@ import com.mustafa.ederi.data.repository.GoalRepositoryImpl
 import com.mustafa.ederi.data.repository.RecurringPaymentRepositoryImpl
 import com.mustafa.ederi.data.repository.TransactionRepositoryImpl
 import com.mustafa.ederi.domain.repository.AccountRepository
+import com.mustafa.ederi.domain.repository.AiRepository
 import com.mustafa.ederi.domain.repository.AuthRepository
 import com.mustafa.ederi.domain.repository.BudgetRepository
 import com.mustafa.ederi.domain.repository.CategoryRepository
@@ -57,4 +59,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindRecurringPaymentRepository(impl: RecurringPaymentRepositoryImpl): RecurringPaymentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAiRepository(impl: AiRepositoryImpl): AiRepository
 }

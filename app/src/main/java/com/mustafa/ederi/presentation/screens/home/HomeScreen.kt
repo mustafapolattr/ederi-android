@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,6 +45,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val insightState by viewModel.insightState.collectAsState()
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -69,13 +71,18 @@ fun HomeScreen(
         when (val state = uiState) {
             is HomeUiState.Loading -> LoadingState()
             is HomeUiState.Error -> ErrorState(state.error.userMessage)
-            is HomeUiState.Content -> DashboardContent(state.data)
+            is HomeUiState.Content -> DashboardContent(state.data, insightState, viewModel::fetchInsight)
         }
     }
 }
 
 @Composable
-private fun DashboardContent(data: DashboardData, modifier: Modifier = Modifier) {
+private fun DashboardContent(
+    data: DashboardData,
+    insightState: InsightUiState,
+    onFetchInsight: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(modifier = modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
         item { SectionTitle("Balances") }
         if (data.totalBalance.isEmpty()) {
@@ -103,6 +110,10 @@ private fun DashboardContent(data: DashboardData, modifier: Modifier = Modifier)
             item { Text("No transactions this month.", style = MaterialTheme.typography.bodySmall) }
         }
         items(data.thisMonth) { summary -> MonthSummaryCard(summary) }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+        item { SectionTitle("AI Insight") }
+        item { AiInsightCard(insightState, onFetchInsight) }
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { SectionTitle("Budgets") }
@@ -189,6 +200,24 @@ private fun DashboardGoalCard(goal: DashboardGoal) {
             Text(text = "${goal.currentAmount} / ${goal.targetAmount} ${goal.currency}", style = MaterialTheme.typography.bodySmall)
             Text(text = "Remaining ${goal.remainingAmount} ${goal.currency}", style = MaterialTheme.typography.bodySmall)
             Text(text = "Needed/month ${goal.requiredMonthlyContribution} ${goal.currency}", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+private fun AiInsightCard(state: InsightUiState, onFetchInsight: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            when (state) {
+                is InsightUiState.Idle -> Button(onClick = onFetchInsight) { Text("Get insight") }
+                is InsightUiState.Loading -> CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                is InsightUiState.Content -> Text(text = state.insight, style = MaterialTheme.typography.bodyMedium)
+                is InsightUiState.Error -> Column {
+                    Text(text = state.error.userMessage, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Button(onClick = onFetchInsight) { Text("Retry") }
+                }
+            }
         }
     }
 }
