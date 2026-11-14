@@ -102,6 +102,8 @@ flowchart TD
 | `staging` | `com.mustafa.ederi.staging` | `https://staging.ederi.app/api/v1/` | No |
 | `prod` | `com.mustafa.ederi` | `https://api.ederi.app/api/v1/` | No |
 
+> **Note:** `staging.ederi.app` and `api.ederi.app` are **placeholders**, not live servers. Set `STAGING_API_BASE_URL` / `PROD_API_BASE_URL` (see below) to point these flavors at a real deployment.
+
 ```bash
 ./gradlew assembleDevDebug        # build
 ./gradlew installDevDebug         # install on a running emulator/device
@@ -135,6 +137,8 @@ The URL must end with `/api/v1/` (trailing slash required by Retrofit).
 ./gradlew testDevDebugUnitTest            # JVM unit tests
 ./gradlew connectedDevDebugAndroidTest    # instrumented tests (needs emulator/device)
 ```
+
+**Latest result** (`./gradlew testDevDebugUnitTest --rerun`): **37 tests in 11 classes, all passed** (0 failures, 0 errors, 0 skipped).
 
 **Unit tests (`app/src/test`)**
 
